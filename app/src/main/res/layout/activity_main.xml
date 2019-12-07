@@ -222,7 +222,7 @@
         app:layout_constraintTop_toBottomOf="@+id/CamIcon" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/NoviceButton"
         android:layout_width="123dp"
         android:layout_height="40dp"
         android:layout_marginStart="10dp"

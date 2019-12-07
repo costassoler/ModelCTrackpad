@@ -114,14 +114,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE); //i think tells the phone youre gonna do stuff without the title
         getSupportActionBar().hide(); //hides the title bar
         setContentView(com.bluedot.modelctrackpad.R.layout.activity_main);
+
 
         //**RECORDING**//
         String[] PERMISSIONS = {
@@ -190,11 +189,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         start = findViewById(com.bluedot.modelctrackpad.R.id.switch1);
         addTouchListener();
 
+        //Switching to novice mode:
+        Button novice = findViewById(com.bluedot.modelctrackpad.R.id.NoviceButton);
+        novice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openActivity2();
+            }
+        });
+
 
 
 
 
     }
+
+
+    public void openActivity2(){
+        Intent intent = new Intent(this, Activity2.class);
+        startActivity(intent);
+    }
+
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         //not in use
@@ -459,6 +474,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mMediaRecorder.setOrientationHint(orientation);
             mMediaRecorder.prepare();
         } catch (IOException e) {
+            e.printStackTrace();
+        }catch(IllegalStateException e){
             e.printStackTrace();
         }
     }
