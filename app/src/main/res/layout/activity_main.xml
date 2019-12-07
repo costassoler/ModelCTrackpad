@@ -208,8 +208,8 @@
 
     <ToggleButton
         android:id="@+id/RecordButton"
-        android:layout_width="48dp"
-        android:layout_height="33dp"
+        android:layout_width="87dp"
+        android:layout_height="36dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="25dp"
         android:background="@color/colorPrimary"
@@ -217,17 +217,20 @@
         android:textColor="@android:color/white"
         android:textOff="Start Recording"
         android:textOn="Stop Recording"
-        android:textSize="4sp"
+        android:textSize="8sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/CamIcon" />
 
     <Button
         android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="123dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="10dp"
         android:layout_marginBottom="50dp"
+        android:background="@color/colorPrimary"
         android:text="novice mode"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@+id/VertPad" />
+        app:layout_constraintBottom_toTopOf="@+id/VertPad"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
