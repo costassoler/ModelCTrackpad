@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.WorkSource;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 //import android.support.design.widget.Snackbar;
@@ -93,6 +94,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     WebView webView;
     ImageView image;
     ImageView imagev;
+
+    public static String Transmit = "GO";
+
 
 
     ToggleButton toggle;
@@ -207,6 +211,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public void openActivity2(){
         Intent intent = new Intent(this, Activity2.class);
+        Transmit = "ABORT";
+        Activity2.Transmit2 = "GO";
         startActivity(intent);
     }
 
@@ -285,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         Result = Thrust+","+String.valueOf(tilt);
 
-        return Result;
+        return Result+"MA";
     }
     @Override
     public void onSensorChanged(SensorEvent event){
@@ -302,11 +308,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         VertReadout.setText(readings[2]);
         CamReadout.setText(readings[3]);
 
-        Socket_AsyncTask cmd_Change_Servo = new Socket_AsyncTask();
-        cmd_Change_Servo.execute();
 
         if (CamStart.isChecked()){
             CamLock.setText("UNLOCK CAMERA");
+
 
 
         }else{
@@ -320,6 +325,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }else{
             Arm.setText("ARM MOTORS");
         }
+        Socket_AsyncTask cmd_Change_Servo = new Socket_AsyncTask();
+        cmd_Change_Servo.execute();
 
     }
 
@@ -399,17 +406,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
 
 
-
-                if (start.isChecked()){
+                if (start.isChecked() & Transmit=="GO"){
                     dataOutputStream.writeBytes(makeCommands());
                     //dataOutputStream.write(TestInt);
                     dataOutputStream.close();
                     socket.close();
-                }else{
-
+                }
+                if(Transmit=="GO"){
                     dataOutputStream.writeBytes("0,0,0,"+makeCommands().split(",")[3]);
                     //dataOutputStream.write(TestInt);
                     dataOutputStream.close();
+                    socket.close();
+                }
+                if(Transmit=="ABORT"){
                     socket.close();
                 }
 

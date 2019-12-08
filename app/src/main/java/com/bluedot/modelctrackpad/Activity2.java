@@ -44,10 +44,12 @@ public class Activity2 extends AppCompatActivity implements SensorEventListener 
     public static Switch CamStart;
     static TextView Test;
     public static String Transmit2 = "GO";
+    static Switch Servo;
 
     TextView CamLock;
     TextView Arm;
     public static int MotorPort = 21567;
+    static String ServoArm;
 
 
 
@@ -56,7 +58,13 @@ public class Activity2 extends AppCompatActivity implements SensorEventListener 
         super.onCreate(savedInstanceState);
         setContentView(com.bluedot.modelctrackpad.R.layout.activity_2);
         Button Cockpit = findViewById(com.bluedot.modelctrackpad.R.id.Cockpit);
-        Test = findViewById(com.bluedot.modelctrackpad.R.id.TestAsync);
+        Servo = findViewById(com.bluedot.modelctrackpad.R.id.Servo2);
+
+        if (Servo.isChecked()){
+            ServoArm="Armed";
+        }else{
+            ServoArm = "Disabled";
+        }
 
         addTouchListener();
         Cockpit.setOnClickListener(new View.OnClickListener() {
@@ -188,13 +196,13 @@ public class Activity2 extends AppCompatActivity implements SensorEventListener 
                 switch(event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         //do something
-                        Test.setText("action down");
+
                         Ub=1;
                         cmd_Change_Servo.execute();
                         return true;
                     case MotionEvent.ACTION_UP:
                         //something else
-                        Test.setText("action up");
+
                         Ub=0;
                         cmd_Change_Servo.execute();
                         return true;
@@ -210,13 +218,11 @@ public class Activity2 extends AppCompatActivity implements SensorEventListener 
                 switch(event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         //do something
-                        Test.setText("action down");
                         Db=1;
                         cmd_Change_Servo.execute();
                         return true;
                     case MotionEvent.ACTION_UP:
                         //something else
-                        Test.setText("action up");
                         Db=0;
                         cmd_Change_Servo.execute();
                         return true;
@@ -232,13 +238,11 @@ public class Activity2 extends AppCompatActivity implements SensorEventListener 
                 switch(event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         //do something
-                        Test.setText("action down");
                         Fb=1;
                         cmd_Change_Servo.execute();
                         return true;
                     case MotionEvent.ACTION_UP:
                         //something else
-                        Test.setText("action up");
                         Fb=0;
                         cmd_Change_Servo.execute();
                         return true;
@@ -256,13 +260,11 @@ public class Activity2 extends AppCompatActivity implements SensorEventListener 
                         //do something
                         Rb=1;
                         cmd_Change_Servo.execute();
-                        Test.setText("action down");
                         return true;
                     case MotionEvent.ACTION_UP:
                         //something else
                         Rb=0;
                         cmd_Change_Servo.execute();
-                        Test.setText("action up");
                 }
                 return false;
             }
@@ -274,13 +276,11 @@ public class Activity2 extends AppCompatActivity implements SensorEventListener 
                 switch(event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         //do something
-                        Test.setText("action down");
                         Bb=1;
                         cmd_Change_Servo.execute();
                         return true;
                     case MotionEvent.ACTION_UP:
                         //something else
-                        Test.setText("action up");
                         Bb=0;
                         cmd_Change_Servo.execute();
 
@@ -295,14 +295,12 @@ public class Activity2 extends AppCompatActivity implements SensorEventListener 
                 switch(event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         //do something
-                        Test.setText("action down");
                         Lb=1;
                         cmd_Change_Servo.execute();
 
                         return true;
                     case MotionEvent.ACTION_UP:
                         //something else
-                        Test.setText("action up");
                         Lb=0;
                         cmd_Change_Servo.execute();
 
@@ -325,6 +323,7 @@ public class Activity2 extends AppCompatActivity implements SensorEventListener 
         //CamLock = findViewById(com.bluedot.modelctrackpad.R.id.CamText);
         //Arm = findViewById(com.bluedot.modelctrackpad.R.id.ArmText);
 
+
         ax2 = event.values[1];
         ay2 = event.values[0];
         az2 = event.values[2];
@@ -338,9 +337,16 @@ public class Activity2 extends AppCompatActivity implements SensorEventListener 
 
 
     public static String makeButtonCommands(){
+        if(ServoArm=="Armed"){
+            float atot2 = (az2*az2)+(ax2*ax2)+(ay2*ay2);
+            C =  String.valueOf(Math.round(Math.acos((az2/Math.sqrt(atot2)))*180/3.14)+35);
 
-        float atot2 = (az2*az2)+(ax2*ax2)+(ay2*ay2);
-        C =  String.valueOf(Math.round(Math.acos((az2/Math.sqrt(atot2)))*180/3.14)+35);
+        }else{
+            C="120";
+        }
+
+
+
 
 
         if(Ub == 1 & Db==0){

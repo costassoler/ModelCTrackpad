@@ -39,98 +39,98 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ToggleButton
+    <Button
         android:id="@+id/down"
         android:layout_width="65dp"
         android:layout_height="42dp"
         android:layout_marginStart="40dp"
         android:layout_marginBottom="10dp"
+        android:background="@color/colorTranslucent"
         android:text="DOWN"
         android:textColor="@android:color/white"
-        android:background="@color/colorPrimaryDark"
+        android:textOff="DOWN"
+        android:textOn="DOWN"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ToggleButton
+    <Button
         android:id="@+id/up"
         android:layout_width="65dp"
         android:layout_height="40dp"
         android:layout_marginStart="40dp"
         android:layout_marginBottom="100dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorTranslucent"
+        android:text="UP"
         android:textColor="@android:color/white"
         android:textOff="UP"
         android:textOn="UP"
         app:layout_constraintBottom_toTopOf="@+id/down"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ToggleButton
+    <Button
         android:id="@+id/reverse"
         android:layout_width="65dp"
         android:layout_height="40dp"
         android:layout_marginEnd="100dp"
         android:layout_marginBottom="10dp"
-        android:background="@color/colorPrimaryDark"
-        android:text="B"
+        android:background="@color/colorTranslucent"
+        android:text="v"
         android:textColor="@android:color/white"
+        android:textOff="B"
+        android:textOn="B"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <ToggleButton
-        android:id="@+id/left"
+    <Button
+        android:id="@+id/right"
         android:layout_width="45dp"
         android:layout_height="75dp"
         android:layout_marginStart="35dp"
         android:layout_marginBottom="20dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorTranslucent"
         android:text="L"
         android:textColor="@android:color/white"
+        android:textOff="R"
+        android:textOn="R"
         app:layout_constraintBottom_toTopOf="@+id/reverse"
         app:layout_constraintStart_toEndOf="@+id/reverse" />
 
-    <ToggleButton
-        android:id="@+id/right"
+    <Button
+        android:id="@+id/left"
         android:layout_width="45dp"
         android:layout_height="75dp"
         android:layout_marginEnd="35dp"
         android:layout_marginBottom="20dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorTranslucent"
         android:text="R"
         android:textColor="@android:color/white"
+        android:textOff="L"
+        android:textOn="L"
         app:layout_constraintBottom_toTopOf="@+id/reverse"
         app:layout_constraintEnd_toStartOf="@+id/reverse" />
 
-    <ToggleButton
+    <Button
         android:id="@+id/forward"
         android:layout_width="65dp"
         android:layout_height="40dp"
         android:layout_marginEnd="100dp"
         android:layout_marginBottom="20dp"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorTranslucent"
         android:text="F"
         android:textColor="@android:color/white"
+        android:textOff="F"
+        android:textOn="F"
         app:layout_constraintBottom_toTopOf="@+id/right"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Switch
-        android:id="@+id/start"
+        android:id="@+id/Servo2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
-        android:layout_marginBottom="40dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/down" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="90dp"
         android:layout_marginTop="10dp"
-        android:text="ARM MOTORS"
-        android:textSize="10sp"
-        app:layout_constraintStart_toEndOf="@+id/down"
-        app:layout_constraintTop_toBottomOf="@+id/start" />
+        android:layout_marginEnd="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>
