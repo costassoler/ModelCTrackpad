@@ -41,13 +41,12 @@ public class Activity2 extends AppCompatActivity implements SensorEventListener 
     public static float ax2;
     public static float ay2;
     public static Switch start;
-    public static Switch CamStart;
-    static TextView Test;
-    public static String Transmit2 = "GO";
-    static Switch Servo;
+    public static Switch Cam;
 
-    TextView CamLock;
-    TextView Arm;
+    public static String Transmit2 = "GO";
+    public static Switch Servo;
+
+
     public static int MotorPort = 21567;
     static String ServoArm;
 
@@ -59,12 +58,6 @@ public class Activity2 extends AppCompatActivity implements SensorEventListener 
         setContentView(com.bluedot.modelctrackpad.R.layout.activity_2);
         Button Cockpit = findViewById(com.bluedot.modelctrackpad.R.id.Cockpit);
         Servo = findViewById(com.bluedot.modelctrackpad.R.id.Servo2);
-
-        if (Servo.isChecked()){
-            ServoArm="Armed";
-        }else{
-            ServoArm = "Disabled";
-        }
 
         addTouchListener();
         Cockpit.setOnClickListener(new View.OnClickListener() {
@@ -163,7 +156,6 @@ public class Activity2 extends AppCompatActivity implements SensorEventListener 
         webView.setWebViewClient(new WebViewClient());
 
         SM = (SensorManager) getSystemService(SENSOR_SERVICE);
-        CamStart =findViewById(com.bluedot.modelctrackpad.R.id.CamSwitch);
 
         //accelerometer sensor:
         mySensor = SM.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -337,12 +329,14 @@ public class Activity2 extends AppCompatActivity implements SensorEventListener 
 
 
     public static String makeButtonCommands(){
-        if(ServoArm=="Armed"){
+
+        
+        if (Servo.isChecked()){
+
             float atot2 = (az2*az2)+(ax2*ax2)+(ay2*ay2);
             C =  String.valueOf(Math.round(Math.acos((az2/Math.sqrt(atot2)))*180/3.14)+35);
-
         }else{
-            C="120";
+            C=C;
         }
 
 
