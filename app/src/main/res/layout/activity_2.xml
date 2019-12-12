@@ -74,7 +74,7 @@
         android:layout_marginEnd="100dp"
         android:layout_marginBottom="10dp"
         android:background="@color/colorTranslucent"
-        android:text="v"
+        android:text="B"
         android:textColor="@android:color/white"
         android:textOff="B"
         android:textOn="B"
@@ -88,7 +88,7 @@
         android:layout_marginStart="35dp"
         android:layout_marginBottom="20dp"
         android:background="@color/colorTranslucent"
-        android:text="L"
+        android:text="R"
         android:textColor="@android:color/white"
         android:textOff="R"
         android:textOn="R"
@@ -102,7 +102,7 @@
         android:layout_marginEnd="35dp"
         android:layout_marginBottom="20dp"
         android:background="@color/colorTranslucent"
-        android:text="R"
+        android:text="L"
         android:textColor="@android:color/white"
         android:textOff="L"
         android:textOn="L"
@@ -130,6 +130,30 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="50dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
+        android:text="Cam Lock"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Servo2" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="138dp"
+        android:layout_height="31dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="8dp"
+        android:text="BLUE DOT ROV"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
