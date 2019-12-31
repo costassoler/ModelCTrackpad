@@ -39,8 +39,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -109,6 +112,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     TextView CamReadout;
     TextView Arm;
     TextView CamLock;
+    static String data;
+    TextView DataRead;
 
     public static int Vert = 100;
 
@@ -167,7 +172,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         webView.getSettings().setBuiltInZoomControls(true);
         //webView.setVerticalScrollBarEnabled(true);
         //TOGGLE USED TO BE HERE
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient(){
+            public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
+                webView.loadUrl("file:///android_asset/dontpanic.html");
+
+            }
+        });
 
 
 
@@ -192,6 +202,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         start = findViewById(com.bluedot.modelctrackpad.R.id.switch1);
         addTouchListener();
+
+        //DataReadout
+        DataRead = findViewById(com.bluedot.modelctrackpad.R.id.textView2);
 
         //Switching to novice mode:
         Button novice = findViewById(com.bluedot.modelctrackpad.R.id.NoviceButton);
@@ -291,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         Result = Thrust+","+String.valueOf(tilt);
 
-        return Result+"MA";
+        return Result;
     }
     @Override
     public void onSensorChanged(SensorEvent event){
@@ -307,6 +320,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         RightReadout.setText(readings[1]);
         VertReadout.setText(readings[2]);
         CamReadout.setText(readings[3]);
+        //System.out.println("hi there");
 
 
         if (CamStart.isChecked()){
@@ -327,6 +341,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         Socket_AsyncTask cmd_Change_Servo = new Socket_AsyncTask();
         cmd_Change_Servo.execute();
+
+        Socket_AsyncTask_Data cmd_DataReadout = new Socket_AsyncTask_Data();
+        cmd_DataReadout.execute();
+        DataRead.setText(data);
+
 
     }
 
@@ -363,6 +382,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 RightReadout.setText(readings[1]);
                 VertReadout.setText(readings[2]);
                 CamReadout.setText(readings[3]);
+                DataRead.setText(data);
                 return true;
             }
         });
@@ -382,6 +402,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 Socket_AsyncTask cmd_Change_Servo = new Socket_AsyncTask();
                 cmd_Change_Servo.execute();
                 readings = makeCommands().split(",");
+                DataRead.setText(data);
 
                 //textView.setText(makeCommands());
                 LeftReadout.setText(readings[0]);
@@ -404,25 +425,60 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 InetAddress inetAddress = InetAddress.getByName(com.bluedot.modelctrackpad.MainActivity.wifiModuleIp);
                 socket = new Socket(inetAddress, com.bluedot.modelctrackpad.MainActivity.MotorPort);
                 DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-
+                //BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
                 if (start.isChecked() & Transmit=="GO"){
+                    //System.out.println(in.readLine());
                     dataOutputStream.writeBytes(makeCommands());
+                    //data = in.readLine();
                     //dataOutputStream.write(TestInt);
                     dataOutputStream.close();
                     socket.close();
                 }
+
                 if(Transmit=="GO"){
                     dataOutputStream.writeBytes("0,0,0,"+makeCommands().split(",")[3]);
+                    //data = dataInputStream.readUTF();
                     //dataOutputStream.write(TestInt);
                     dataOutputStream.close();
+                    System.out.println("hi there1");
+                    //System.out.println(dataInputStream.available());
                     socket.close();
                 }
                 if(Transmit=="ABORT"){
                     socket.close();
                 }
-
             }catch (UnknownHostException e){e.printStackTrace();}catch (IOException e){e.printStackTrace();}
+            return null;
+        }
+    }
+    //Data Capture:
+    public static class Socket_AsyncTask_Data extends AsyncTask<Void,Void,Void> {
+        Socket socketData;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                System.out.println("starting try");
+                InetAddress inetAddress2 = InetAddress.getByName(MainActivity.wifiModuleIp);
+                socketData = new Socket(inetAddress2, 52849);
+                //DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                BufferedReader in = new BufferedReader(new InputStreamReader(socketData.getInputStream()));
+                System.out.println("ReaderTest");
+                //System.out.println(in.readLine());
+                data = in.readLine();
+                System.out.println("ReadTest");
+                System.out.println(data);
+
+                //dataOutputStream.write(TestInt);
+                socketData.close();
+                return null;
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             return null;
         }
     }
