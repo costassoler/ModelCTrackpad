@@ -47,6 +47,11 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Random;
 
 //rov functions:
 
@@ -97,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     WebView webView;
     ImageView image;
     ImageView imagev;
+    ImageView compass;
 
     public static String Transmit = "GO";
 
@@ -204,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         addTouchListener();
 
         //DataReadout
-        DataRead = findViewById(com.bluedot.modelctrackpad.R.id.textView2);
+        //DataRead = findViewById(com.bluedot.modelctrackpad.R.id.textView2);
 
         //Switching to novice mode:
         Button novice = findViewById(com.bluedot.modelctrackpad.R.id.NoviceButton);
@@ -214,6 +220,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 openActivity2();
             }
         });
+
+        //COMPASS:
+        //compass = findViewById(com.bluedot.modelctrackpad.R.id.compassView);
+        compass = findViewById(com.bluedot.modelctrackpad.R.id.compassView);
+        data = "none";
 
 
 
@@ -234,6 +245,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //not in use
 
     }
+    public void rotateCompass(ImageView imageView, String telem){
+        //Random r = new Random();
+        //float compVal = Float.valueOf(telem)+r.nextFloat()*45;
+        if(data.equals("none")){
+            imageView.setVisibility(View.INVISIBLE);
+        }
+        if(data!="none"){
+            imageView.setVisibility(View.VISIBLE);
+        }
+        try{
+            imageView.setRotation(Float.valueOf(telem));
+        }catch (Exception e){
+        }
+
+    }
 
     public static String makeCommands() {
 
@@ -248,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         //a = ((fx-180)/180)*60;
-        a = Math.round(fx*100);
+        a = Math.round(fx*30);
         //b = ((180-fy)/180)*100;
         b = Math.round(fy*100);
         c = Math.round(zeta*100);
@@ -304,6 +330,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         Result = Thrust+","+String.valueOf(tilt);
 
+
         return Result;
     }
     @Override
@@ -339,12 +366,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }else{
             Arm.setText("ARM MOTORS");
         }
+        //rotateCompass(compass, data);
         Socket_AsyncTask cmd_Change_Servo = new Socket_AsyncTask();
         cmd_Change_Servo.execute();
 
         Socket_AsyncTask_Data cmd_DataReadout = new Socket_AsyncTask_Data();
         cmd_DataReadout.execute();
-        DataRead.setText(data);
+        rotateCompass(compass, data);
+        //DataRead.setText(data);
+
 
 
     }
@@ -382,7 +412,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 RightReadout.setText(readings[1]);
                 VertReadout.setText(readings[2]);
                 CamReadout.setText(readings[3]);
-                DataRead.setText(data);
+                //DataRead.setText(data);
+                rotateCompass(compass, data);
                 return true;
             }
         });
@@ -402,7 +433,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 Socket_AsyncTask cmd_Change_Servo = new Socket_AsyncTask();
                 cmd_Change_Servo.execute();
                 readings = makeCommands().split(",");
-                DataRead.setText(data);
+                //DataRead.setText(data);
 
                 //textView.setText(makeCommands());
                 LeftReadout.setText(readings[0]);
@@ -474,8 +505,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 socketData.close();
                 return null;
             } catch (UnknownHostException e) {
+                data = "none";
                 e.printStackTrace();
             } catch (IOException e) {
+                data = "none";
                 e.printStackTrace();
             }
 
@@ -525,10 +558,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void initRecorder() {
         try {
+            Date date = Calendar.getInstance().getTime();
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+            String strDate = dateFormat.format(date);
 
             mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
             mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); //THREE_GPP
-            mMediaRecorder.setOutputFile(Environment.getExternalStorageDirectory() + "/ModelcVideo.mp4");
+            mMediaRecorder.setOutputFile(Environment.getExternalStorageDirectory() + "/ModelcVideo"+strDate+".mp4");
             mMediaRecorder.setVideoSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
             mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
             mMediaRecorder.setVideoEncodingBitRate(512 * 1000);

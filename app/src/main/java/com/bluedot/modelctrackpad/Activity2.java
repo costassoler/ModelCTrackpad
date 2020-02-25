@@ -153,7 +153,12 @@ public class Activity2 extends AppCompatActivity implements SensorEventListener 
         webView.getSettings().setBuiltInZoomControls(true);
         //webView.setVerticalScrollBarEnabled(true);
         //TOGGLE USED TO BE HERE
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient(){
+            public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
+                webView.loadUrl("file:///android_asset/dontpanic.html");
+
+            }
+        });
 
         SM = (SensorManager) getSystemService(SENSOR_SERVICE);
 
