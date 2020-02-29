@@ -460,7 +460,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                 if (start.isChecked() & Transmit=="GO"){
                     //System.out.println(in.readLine());
-                    dataOutputStream.writeBytes(makeCommands());
+                    dataOutputStream.writeBytes(makeCommands()+","+"AutoOn");
                     //data = in.readLine();
                     //dataOutputStream.write(TestInt);
                     dataOutputStream.close();
@@ -468,7 +468,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
 
                 if(Transmit=="GO"){
-                    dataOutputStream.writeBytes("0,0,0,"+makeCommands().split(",")[3]);
+                    dataOutputStream.writeBytes("0,0,0,"+makeCommands().split(",")[3]+","+"AutoOff");
                     //data = dataInputStream.readUTF();
                     //dataOutputStream.write(TestInt);
                     dataOutputStream.close();
@@ -576,8 +576,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mMediaRecorder.prepare();
         } catch (IOException e) {
             e.printStackTrace();
+            mMediaRecorder.stop();
+            mMediaRecorder.reset();
+            actionBtnReload();
+            stopScreenSharing();
+
         }catch(IllegalStateException e){
             e.printStackTrace();
+            mMediaRecorder.stop();
+            mMediaRecorder.reset();
+            stopScreenSharing();
+
         }
     }
 
@@ -663,10 +672,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         destroyMediaProjection();
+
     }
 
     @Override
