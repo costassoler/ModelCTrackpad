@@ -13,14 +13,11 @@ import android.hardware.display.VirtualDisplay;
 import android.media.MediaRecorder;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.WorkSource;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
-//import android.support.design.widget.Snackbar;
+/* import android.support.design.widget.Snackbar; */
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -32,7 +29,6 @@ import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -40,7 +36,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -49,24 +45,25 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
+import java.util.List;
 
 //rov functions:
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
-    private Sensor mySensor;
-    private SensorManager SM;
+    Sensor mySensor;
+    SensorManager SM;
     public static String wifiModuleIp = "raspberrypi";//"192.168.8.196";
     public static int MotorPort = 21567;
     public static float fx = 0;
     public static float fy = 0;
-    public static String CMD = "0,0,0";
+    /*public static String CMD = "0,0,0";*/
     public static float a = 0;
     public static float b = 0;
     public static float c = 0;
-    public static float fz = 0;
+    /*public static float fz = 0;*/
     public static float zeta = 0; //HERE
     public static float L=0;
     public static float R=0;
@@ -106,27 +103,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public static String Transmit = "GO";
 
-
-
-    ToggleButton toggle;
-
-
-    TextView textView;
     TextView LeftReadout;
     TextView RightReadout;
     TextView VertReadout;
     TextView CamReadout;
     TextView Arm;
     TextView CamLock;
+    TextView VoltageReadout;
+    TextView VoltageHeading;
     static String data;
-    TextView DataRead;
-
-    public static int Vert = 100;
-
-    //Recording Software:
-    public static String fileName = null;
-    ToggleButton toggleRecord;
-
 
 
     @Override
@@ -192,6 +177,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         RightReadout = findViewById(com.bluedot.modelctrackpad.R.id.RightReadout);
         VertReadout = findViewById(com.bluedot.modelctrackpad.R.id.VertReadout);
         CamReadout = findViewById(com.bluedot.modelctrackpad.R.id.CamReadout);
+        VoltageReadout = findViewById(com.bluedot.modelctrackpad.R.id.VoltageReadout);
+        VoltageReadout.setVisibility(View.INVISIBLE);
+        VoltageHeading = findViewById(com.bluedot.modelctrackpad.R.id.VoltageHeading);
+        VoltageHeading.setVisibility(View.INVISIBLE);
 
         Arm = findViewById(com.bluedot.modelctrackpad.R.id.Arm);
         CamLock = findViewById(com.bluedot.modelctrackpad.R.id.CamLock);
@@ -251,14 +240,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if(data.equals("none")){
             imageView.setVisibility(View.INVISIBLE);
         }
-        if(data!="none"){
+        if(!data.equals("none")){
             imageView.setVisibility(View.VISIBLE);
         }
         try{
-            imageView.setRotation(Float.valueOf(telem));
+            List<String> items = Arrays.asList(telem.split("\\s*,\\s*"));
+            imageView.setRotation(Float.valueOf(items.get(0)));
         }catch (Exception e){
         }
 
+    }
+
+    public void displayVoltage(TextView textView, String telem){
+        //Random r = new Random();
+        //float compVal = Float.valueOf(telem)+r.nextFloat()*45;
+        List<String> items = Arrays.asList(telem.split("\\s*,\\s*"));
+        textView.setText(items.get(1));
+        VoltageHeading.setVisibility(View.VISIBLE);
+        VoltageReadout.setVisibility(View.VISIBLE);
     }
 
     public static String makeCommands() {
@@ -266,11 +265,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (CamStart.isChecked()){
             atot = (az*az)+(ax*ax)+(ay*ay);
             tilt =  Math.round(Math.acos((az/Math.sqrt(atot)))*180/3.14)+35;
-
-
-
-        }else{
-            tilt=tilt;
         }
 
         //a = ((fx-180)/180)*60;
@@ -356,7 +350,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
         }else{
-            CamLock.setText("LOCK CAMERA");
+            String LockNotification = "LOCK CAMERA";
+            CamLock.setText(LockNotification);
         }
 
         if (start.isChecked()){
@@ -372,7 +367,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         Socket_AsyncTask_Data cmd_DataReadout = new Socket_AsyncTask_Data();
         cmd_DataReadout.execute();
-        rotateCompass(compass, data);
+        try{
+            rotateCompass(compass, data);
+        }catch(Exception e){
+            
+        }
+        try{
+            displayVoltage(VoltageReadout,data);
+        }catch(Exception e){
+
+        }
+
         //DataRead.setText(data);
 
 
@@ -647,7 +652,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     isRecording = false;
                     actionBtnReload();
                 }
-                return;
             }
         }
     }
