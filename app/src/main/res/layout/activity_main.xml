@@ -223,7 +223,7 @@
         android:layout_width="97dp"
         android:layout_height="17dp"
         android:layout_marginStart="10dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="20dp"
         android:background="@color/colorPrimary"
         android:text="BUTTON CONTROL"
         android:textColor="@android:color/white"
@@ -233,11 +233,11 @@
 
     <TextView
         android:id="@+id/VoltageHeading"
-        android:layout_width="65dp"
-        android:layout_height="16dp"
+        android:layout_width="105dp"
+        android:layout_height="17dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:text="BATTERY:"
+        android:layout_marginTop="10dp"
+        android:text="CELL VOLTAGE:"
         android:textAlignment="textStart"
         android:textColor="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
@@ -245,13 +245,13 @@
 
     <TextView
         android:id="@+id/VoltageReadout"
-        android:layout_width="65dp"
+        android:layout_width="45dp"
         android:layout_height="16dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
         android:textAlignment="center"
         android:textColor="@android:color/white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/VoltageHeading" />
+        app:layout_constraintStart_toEndOf="@+id/VoltageHeading"
+        app:layout_constraintTop_toBottomOf="@+id/VertPropIcon" />
 
     <ImageView
         android:id="@+id/compassView"

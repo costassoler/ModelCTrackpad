@@ -49,7 +49,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 //rov functions:
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
@@ -268,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         //a = ((fx-180)/180)*60;
-        a = Math.round(fx*30);
+        a = Math.round(fx*40);
         //b = ((180-fy)/180)*100;
         b = Math.round(fy*100);
         c = Math.round(zeta*100);
@@ -370,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         try{
             rotateCompass(compass, data);
         }catch(Exception e){
-            
+
         }
         try{
             displayVoltage(VoltageReadout,data);
