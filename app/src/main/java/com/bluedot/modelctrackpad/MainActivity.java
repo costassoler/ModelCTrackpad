@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final int DISPLAY_HEIGHT = 1280;
     private MediaProjection mMediaProjection;
     private VirtualDisplay mVirtualDisplay;
-    private MediaProjectionCallback mMediaProjectionCallback;
+    //private MediaProjectionCallback mMediaProjectionCallback;
     private MediaRecorder mMediaRecorder;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static final int REQUEST_PERMISSION_KEY = 1;
@@ -120,8 +120,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         getSupportActionBar().hide(); //hides the title bar
         setContentView(com.bluedot.modelctrackpad.R.layout.activity_main);
 
-
-        //**RECORDING**//
+/*
+        //**RECORDING
         String[] PERMISSIONS = {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE
@@ -149,9 +149,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             }
         });
-        //**END RECORDING**//
+        //END RECORDING
 
-
+*/
 
         webView = findViewById(com.bluedot.modelctrackpad.R.id.WebView);
         webView.loadUrl("http://raspberrypi:8000/stream.mjpg");
@@ -521,7 +521,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     //Recording:
-
+    /*
 
     public void actionBtnReload() {
         if (isRecording) {
@@ -701,4 +701,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
     }
+
+     */
 }
