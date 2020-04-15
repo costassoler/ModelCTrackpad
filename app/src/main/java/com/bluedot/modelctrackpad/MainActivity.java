@@ -1,28 +1,29 @@
 package com.bluedot.modelctrackpad;
 //recording imports:
-import android.Manifest;
-import android.content.Context;
+//import android.Manifest;
+//import android.content.Context;
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+//import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.hardware.display.DisplayManager;
-import android.hardware.display.VirtualDisplay;
-import android.media.MediaRecorder;
-import android.media.projection.MediaProjection;
-import android.media.projection.MediaProjectionManager;
+//import android.hardware.display.DisplayManager;
+//import android.hardware.display.VirtualDisplay;
+//import android.media.MediaRecorder;
+//import android.media.projection.MediaProjection;
+//import android.media.projection.MediaProjectionManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.NonNull;
+//import android.os.Environment;
+//import android.support.annotation.NonNull;
 /* import android.support.design.widget.Snackbar; */
-import android.support.v4.app.ActivityCompat;
+//import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.SparseIntArray;
+//import android.util.DisplayMetrics;
+//import android.util.Log;
+//import android.util.SparseIntArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -32,8 +33,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ToggleButton;
+//import android.widget.Toast;
+//import android.widget.ToggleButton;
 
 import java.io.BufferedReader;
 
@@ -43,11 +44,11 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+//import java.text.DateFormat;
+//import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
+//import java.util.Calendar;
+//import java.util.Date;
 import java.util.List;
 //rov functions:
 
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public static float b = 0;
     public static float c = 0;
     /*public static float fz = 0;*/
-    public static float zeta = 0; //HERE
+    public static float zeta = 0;
     public static float L=0;
     public static float R=0;
     public static float V=0;
@@ -74,20 +75,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public static double tilt=125;
 
     //Recording code:
-    private static final String TAG = "MainActivity";
-    private static final int REQUEST_CODE = 1000;
-    private int mScreenDensity;
-    Button btn_action;
-    private MediaProjectionManager mProjectionManager;
-    private static final int DISPLAY_WIDTH = 720;
-    private static final int DISPLAY_HEIGHT = 1280;
-    private MediaProjection mMediaProjection;
-    private VirtualDisplay mVirtualDisplay;
+    //private static final String TAG = "MainActivity";
+    //private static final int REQUEST_CODE = 1000;
+    //private int mScreenDensity;
+    //Button btn_action;
+    //private MediaProjectionManager mProjectionManager;
+    //public static final int DISPLAY_WIDTH = 720;
+    //private static final int DISPLAY_HEIGHT = 1280;
+    //private MediaProjection mMediaProjection;
+    //private VirtualDisplay mVirtualDisplay;
     //private MediaProjectionCallback mMediaProjectionCallback;
-    private MediaRecorder mMediaRecorder;
-    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
-    private static final int REQUEST_PERMISSION_KEY = 1;
-    boolean isRecording = false;
+    //private MediaRecorder mMediaRecorder;
+    //private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+    //private static final int REQUEST_PERMISSION_KEY = 1;
+    //boolean isRecording = false;
 
 
     public static String Result;
@@ -236,17 +237,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void rotateCompass(ImageView imageView, String telem){
         //Random r = new Random();
         //float compVal = Float.valueOf(telem)+r.nextFloat()*45;
-        if(data.equals("none")){
-            imageView.setVisibility(View.INVISIBLE);
-        }
-        if(!data.equals("none")){
-            imageView.setVisibility(View.VISIBLE);
-        }
+
         try{
             List<String> items = Arrays.asList(telem.split("\\s*,\\s*"));
+
+            if(items.get(0).equals("none")){
+                imageView.setVisibility(View.INVISIBLE);
+            }
+            if(!items.get(0).equals("none")){
+                imageView.setVisibility(View.VISIBLE);
+            }
             imageView.setRotation(Float.valueOf(items.get(0)));
+
         }catch (Exception e){
+            System.out.println("Error rotating compass");
         }
+
 
     }
 
@@ -319,9 +325,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //R = Math.round(R/10)*10;
         //V = Math.round(V/10)*10;
         //L,R,V
-        Thrust = String.valueOf(L) + "," + String.valueOf(R) + "," + String.valueOf(V);
+        Thrust = L + "," + R + "," + V;
 
-        Result = Thrust+","+String.valueOf(tilt);
+        Result = Thrust+","+tilt;
 
 
         return Result;
@@ -344,7 +350,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
         if (CamStart.isChecked()){
-            CamLock.setText("UNLOCK CAMERA");
+            String ulc="UNLOCK CAMERA";
+            CamLock.setText(ulc);
 
 
 
@@ -354,11 +361,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         if (start.isChecked()){
-            Arm.setText("STOP MOTORS");
+            String sm = "STOP MOTORS";
+            Arm.setText(sm);
 
 
         }else{
-            Arm.setText("ARM MOTORS");
+            String am = "ARM MOTORS";
+            Arm.setText(am);
         }
         //rotateCompass(compass, data);
         Socket_AsyncTask cmd_Change_Servo = new Socket_AsyncTask();
@@ -369,12 +378,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         try{
             rotateCompass(compass, data);
         }catch(Exception e){
-
+            System.out.println("Failed to display heading");
         }
         try{
             displayVoltage(VoltageReadout,data);
         }catch(Exception e){
-
+            System.out.println("Failed to display voltage");
         }
 
         //DataRead.setText(data);
@@ -383,6 +392,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void addTouchListener() {
         image = findViewById(com.bluedot.modelctrackpad.R.id.imageView);
         imagev = findViewById(com.bluedot.modelctrackpad.R.id.VertPad);
@@ -393,8 +403,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         image.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                int Width = image.getWidth();
-                int Height = image.getHeight();
+                float Width = image.getWidth();
+                float Height = image.getHeight();
 
                 fx = 0;
                 fx = (event.getX()-(Width/2))/(Width/2);
@@ -425,7 +435,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         imagev.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                int VHeight = imagev.getHeight();
+                float VHeight = imagev.getHeight();
 
                 zeta = ((VHeight/2)-event.getY())/(VHeight/2);
                 switch (event.getActionMasked()){
@@ -462,7 +472,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
                 //BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                if (start.isChecked() & Transmit=="GO"){
+                if (start.isChecked() & Transmit.equals("GO")){
                     //System.out.println(in.readLine());
                     dataOutputStream.writeBytes(makeCommands()+","+"AutoOn");
                     //data = in.readLine();
@@ -471,7 +481,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     socket.close();
                 }
 
-                if(Transmit=="GO"){
+                if(Transmit.equals("GO")){
                     dataOutputStream.writeBytes("0,0,0,"+makeCommands().split(",")[3]+","+"AutoOff");
                     //data = dataInputStream.readUTF();
                     //dataOutputStream.write(TestInt);
@@ -480,14 +490,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     //System.out.println(dataInputStream.available());
                     socket.close();
                 }
-                if(Transmit=="ABORT"){
+                if(Transmit.equals("ABORT")){
                     socket.close();
                 }
-            }catch (UnknownHostException e){e.printStackTrace();}catch (IOException e){e.printStackTrace();}
+            }catch (UnknownHostException e) {
+                e.printStackTrace();
+                System.out.println("UnknownHostException Transmit");
+            }catch (IOException e){
+                e.printStackTrace();
+                System.out.println("IOException Transmit");
+            }
             return null;
         }
     }
-    //Data Capture:
+    //Telemetry Capture:
     public static class Socket_AsyncTask_Data extends AsyncTask<Void,Void,Void> {
         Socket socketData;
 
@@ -511,9 +527,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             } catch (UnknownHostException e) {
                 data = "none";
                 e.printStackTrace();
+                System.out.println("UnknownHostException Telem");
             } catch (IOException e) {
                 data = "none";
                 e.printStackTrace();
+                System.out.println("IOException Telem");
             }
 
             return null;
