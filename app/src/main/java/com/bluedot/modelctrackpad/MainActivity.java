@@ -93,12 +93,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public static String Result;
     public static Switch start;
+    public static Switch Ch1;
+    public static String chan1;
     public static Switch CamStart;
     public static String Thrust;
     public String[] readings;
     WebView webView;
     ImageView image;
     ImageView imagev;
+    ImageView joystick1;
+    ImageView verticalBar;
     ImageView compass;
 
     public static String Transmit = "GO";
@@ -120,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         requestWindowFeature(Window.FEATURE_NO_TITLE); //i think tells the phone youre gonna do stuff without the title
         getSupportActionBar().hide(); //hides the title bar
         setContentView(com.bluedot.modelctrackpad.R.layout.activity_main);
+        //Starts background reading/transmitting data in case sensor not changed
 
 /*
         //**RECORDING
@@ -155,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 */
 
         webView = findViewById(com.bluedot.modelctrackpad.R.id.WebView);
+
         webView.loadUrl("http://raspberrypi:8000/stream.mjpg");
         webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setLoadWithOverviewMode(true);
@@ -196,12 +202,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         SM.registerListener(this, mySensor, SensorManager.SENSOR_DELAY_NORMAL);
 
         start = findViewById(com.bluedot.modelctrackpad.R.id.switch1);
+        Ch1 = findViewById(com.bluedot.modelctrackpad.R.id.Channel1);
         addTouchListener();
+
+
 
         //DataReadout
         //DataRead = findViewById(com.bluedot.modelctrackpad.R.id.textView2);
 
         //Switching to novice mode:
+        /*
         Button novice = findViewById(com.bluedot.modelctrackpad.R.id.NoviceButton);
         novice.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -209,12 +219,53 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 openActivity2();
             }
         });
+        */
+
 
         //COMPASS:
         //compass = findViewById(com.bluedot.modelctrackpad.R.id.compassView);
         compass = findViewById(com.bluedot.modelctrackpad.R.id.compassView);
         data = "none";
 
+        Socket_AsyncTask cmd_Change_Servo = new Socket_AsyncTask();
+        cmd_Change_Servo.execute();
+
+
+
+        /*
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                while (true){
+                    try{
+                        InetAddress inetAddress = InetAddress.getByName(com.bluedot.modelctrackpad.MainActivity.wifiModuleIp);
+                        Socket socket = new Socket(inetAddress, com.bluedot.modelctrackpad.MainActivity.MotorPort);
+                        DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                        System.out.println("Thread Running");
+
+
+
+                        dataOutputStream.writeBytes(makeCommands());
+
+                        //data = in.readLine();
+                        //dataOutputStream.write(TestInt);
+                        dataOutputStream.close();
+                        socket.close();
+
+
+                    }catch (IOException e) {
+                        System.out.println("IOException Transmit");
+                    }
+                }
+
+
+            }
+        }).start();
+        */
+
+
+
 
 
 
@@ -222,18 +273,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
+    /*
     public void openActivity2(){
         Intent intent = new Intent(this, Activity2.class);
         Transmit = "ABORT";
         Activity2.Transmit2 = "GO";
         startActivity(intent);
     }
+    */
+
+
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         //not in use
 
     }
+
     public void rotateCompass(ImageView imageView, String telem){
         //Random r = new Random();
         //float compVal = Float.valueOf(telem)+r.nextFloat()*45;
@@ -247,10 +304,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             if(!items.get(0).equals("none")){
                 imageView.setVisibility(View.VISIBLE);
             }
+
             imageView.setRotation(Float.valueOf(items.get(0)));
 
+
         }catch (Exception e){
-            System.out.println("Error rotating compass");
+            //System.out.println("Error rotating compass");
         }
 
 
@@ -263,6 +322,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         textView.setText(items.get(1));
         VoltageHeading.setVisibility(View.VISIBLE);
         VoltageReadout.setVisibility(View.VISIBLE);
+
     }
 
     public static String makeCommands() {
@@ -277,6 +337,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //b = ((180-fy)/180)*100;
         b = Math.round(fy*100);
         c = Math.round(zeta*100);
+
+
+        //joystick1.setTranslationX(fx);
+
         //b=Vert-100;
         //c=((250-fy)/250)*100;
 
@@ -327,8 +391,29 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //L,R,V
         Thrust = L + "," + R + "," + V;
 
-        Result = Thrust+","+tilt;
 
+        if (start.isChecked() & Ch1.isChecked()){
+            chan1="AutoOn";
+        }
+        if(start.isChecked()){
+            L=L;
+            R=R;
+            V=V;
+        }
+        if (!Ch1.isChecked()){
+            chan1="AutoOff";
+
+        }
+        if(!start.isChecked()){
+            chan1="AutoOff";
+            L=0;
+            R=0;
+            V=0;
+        }
+
+
+        Result = String.valueOf(L) + "," + String.valueOf(R) + "," + String.valueOf(V) + "," +String.valueOf(tilt)+ ","+chan1;
+        //System.out.println(Result);
 
         return Result;
     }
@@ -350,13 +435,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
         if (CamStart.isChecked()){
-            String ulc="UNLOCK CAMERA";
+            String ulc="LOCK CAMERA";
             CamLock.setText(ulc);
 
 
 
         }else{
-            String LockNotification = "LOCK CAMERA";
+            String LockNotification = "UNLOCK CAMERA";
             CamLock.setText(LockNotification);
         }
 
@@ -370,20 +455,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Arm.setText(am);
         }
         //rotateCompass(compass, data);
+        /*
         Socket_AsyncTask cmd_Change_Servo = new Socket_AsyncTask();
         cmd_Change_Servo.execute();
+
+         */
 
         Socket_AsyncTask_Data cmd_DataReadout = new Socket_AsyncTask_Data();
         cmd_DataReadout.execute();
         try{
             rotateCompass(compass, data);
         }catch(Exception e){
-            System.out.println("Failed to display heading");
+            //System.out.println("Failed to display heading");
         }
         try{
             displayVoltage(VoltageReadout,data);
         }catch(Exception e){
-            System.out.println("Failed to display voltage");
+            //System.out.println("Failed to display voltage");
         }
 
         //DataRead.setText(data);
@@ -396,6 +484,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void addTouchListener() {
         image = findViewById(com.bluedot.modelctrackpad.R.id.imageView);
         imagev = findViewById(com.bluedot.modelctrackpad.R.id.VertPad);
+        joystick1 = findViewById(com.bluedot.modelctrackpad.R.id.joystick1);
+        verticalBar = findViewById(com.bluedot.modelctrackpad.R.id.verticalBar);
         //unifying the droids:
 
 
@@ -406,19 +496,38 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 float Width = image.getWidth();
                 float Height = image.getHeight();
 
-                fx = 0;
+
                 fx = (event.getX()-(Width/2))/(Width/2);
-                fy = 0;
                 fy = ((Height/2)-event.getY())/(Height/2);
+                if(fx>1){
+                    fx=1;
+                }
+                if(fx<-1){
+                    fx=-1;
+                }
+                if(fy>1){
+                    fy=1;
+                }
+                if(fy<-1){
+                    fy=-1;
+                }
+                joystick1.setTranslationX(fx*Width/2);
+                joystick1.setTranslationY(-fy*Height/2);
+
                 switch (event.getActionMasked()){
                     case MotionEvent.ACTION_UP:
                         fx=0;
                         fy=0;
+                        joystick1.setTranslationX(fx*Width/2);
+                        joystick1.setTranslationY(-fy*Height/2);
 
                 }
 
+                /*
                 Socket_AsyncTask cmd_Change_Servo = new Socket_AsyncTask();
                 cmd_Change_Servo.execute();
+
+                 */
                 readings = makeCommands().split(",");
 
                 //textView.setText(makeCommands());
@@ -426,7 +535,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 RightReadout.setText(readings[1]);
                 VertReadout.setText(readings[2]);
                 CamReadout.setText(readings[3]);
-                //DataRead.setText(data);
+
                 rotateCompass(compass, data);
                 return true;
             }
@@ -443,9 +552,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         zeta=0;
 
                 }
+                if (zeta<-1){
+                    zeta=-1;
+                }
+                if(zeta>1){
+                    zeta=1;
+                }
+                verticalBar.setTranslationY(-zeta*VHeight/2);
 
+                /*
                 Socket_AsyncTask cmd_Change_Servo = new Socket_AsyncTask();
                 cmd_Change_Servo.execute();
+
+                 */
                 readings = makeCommands().split(",");
                 //DataRead.setText(data);
 
@@ -466,22 +585,55 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Socket socket;
         @Override
         protected Void doInBackground(Void... params){
-            try{
-                InetAddress inetAddress = InetAddress.getByName(com.bluedot.modelctrackpad.MainActivity.wifiModuleIp);
-                socket = new Socket(inetAddress, com.bluedot.modelctrackpad.MainActivity.MotorPort);
-                DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-                //BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            while (true){
+                try {
 
-                if (start.isChecked() & Transmit.equals("GO")){
+                    InetAddress inetAddress = InetAddress.getByName(com.bluedot.modelctrackpad.MainActivity.wifiModuleIp);
+                    socket = new Socket(inetAddress, com.bluedot.modelctrackpad.MainActivity.MotorPort);
+                    System.out.println("Doing in Background");
+                    DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                    //BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+                    //Testing before moving switches into makeCommands():
+                    dataOutputStream.writeBytes(makeCommands());
+
+                    //data = in.readLine();
+                    //dataOutputStream.write(TestInt);
+                    dataOutputStream.close();
+                    System.out.println("socket finished");
+                    socket.close();
+                }catch (UnknownHostException e) {
+                    e.printStackTrace();
+                    System.out.println("UnknownHostException Transmit");
+                }catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println("IOException Transmit");
+                }
+
+
+
+                //Moved into makeCommands():
+                /*
+
+                if (start.isChecked() & Ch1.isChecked()){
                     //System.out.println(in.readLine());
                     dataOutputStream.writeBytes(makeCommands()+","+"AutoOn");
                     //data = in.readLine();
                     //dataOutputStream.write(TestInt);
                     dataOutputStream.close();
+
                     socket.close();
                 }
+                if (start.isChecked() & !Ch1.isChecked()){
+                    //System.out.println(in.readLine());
+                    dataOutputStream.writeBytes(makeCommands()+","+"AutoOff");
+                    dataOutputStream.close();
 
-                if(Transmit.equals("GO")){
+                    socket.close();
+
+                }
+
+                if(!start.isChecked() & !Ch1.isChecked()& Transmit.equals("GO")){
                     dataOutputStream.writeBytes("0,0,0,"+makeCommands().split(",")[3]+","+"AutoOff");
                     //data = dataInputStream.readUTF();
                     //dataOutputStream.write(TestInt);
@@ -490,17 +642,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     //System.out.println(dataInputStream.available());
                     socket.close();
                 }
-                if(Transmit.equals("ABORT")){
-                    socket.close();
-                }
-            }catch (UnknownHostException e) {
-                e.printStackTrace();
-                System.out.println("UnknownHostException Transmit");
-            }catch (IOException e){
-                e.printStackTrace();
-                System.out.println("IOException Transmit");
+
+                 */
+
+
+
+
             }
-            return null;
+
         }
     }
     //Telemetry Capture:
