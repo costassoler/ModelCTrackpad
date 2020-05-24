@@ -227,8 +227,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         compass = findViewById(com.bluedot.modelctrackpad.R.id.compassView);
         data = "none";
 
-        Socket_AsyncTask cmd_Change_Servo = new Socket_AsyncTask();
-        cmd_Change_Servo.execute();
+        Socket_AsyncTask_Data cmd_DataReadout = new Socket_AsyncTask_Data();
+        cmd_DataReadout.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        //cmd_DataReadout.execute();
+
+
+        Socket_AsyncTask transmit = new Socket_AsyncTask();
+        transmit.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        //transmit.execute();
+
+
+
+
 
 
 
@@ -460,9 +470,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         cmd_Change_Servo.execute();
 
          */
-
+        /*
         Socket_AsyncTask_Data cmd_DataReadout = new Socket_AsyncTask_Data();
         cmd_DataReadout.execute();
+         */
+
         try{
             rotateCompass(compass, data);
         }catch(Exception e){
@@ -587,10 +599,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         protected Void doInBackground(Void... params){
             while (true){
                 try {
-
+                    System.out.println("Transmitting");
                     InetAddress inetAddress = InetAddress.getByName(com.bluedot.modelctrackpad.MainActivity.wifiModuleIp);
                     socket = new Socket(inetAddress, com.bluedot.modelctrackpad.MainActivity.MotorPort);
-                    System.out.println("Doing in Background");
+                    //System.out.println("Doing in Background");
                     DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
                     //BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -600,7 +612,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     //data = in.readLine();
                     //dataOutputStream.write(TestInt);
                     dataOutputStream.close();
-                    System.out.println("socket finished");
+                    //System.out.println("socket finished");
                     socket.close();
                 }catch (UnknownHostException e) {
                     e.printStackTrace();
@@ -609,6 +621,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     e.printStackTrace();
                     System.out.println("IOException Transmit");
                 }
+
+
 
 
 
@@ -653,37 +667,39 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
     //Telemetry Capture:
-    public static class Socket_AsyncTask_Data extends AsyncTask<Void,Void,Void> {
+    public static class Socket_AsyncTask_Data extends AsyncTask<Void,Void,Void>
+    {
         Socket socketData;
-
         @Override
         protected Void doInBackground(Void... params) {
-            try {
-                System.out.println("starting try");
-                InetAddress inetAddress2 = InetAddress.getByName(MainActivity.wifiModuleIp);
-                socketData = new Socket(inetAddress2, 52849);
-                //DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-                BufferedReader in = new BufferedReader(new InputStreamReader(socketData.getInputStream()));
-                System.out.println("ReaderTest");
-                //System.out.println(in.readLine());
-                data = in.readLine();
-                System.out.println("ReadTest");
-                System.out.println(data);
+            while (true){
+                try {
+                    System.out.println("Telem");
+                    InetAddress inetAddress2 = InetAddress.getByName(MainActivity.wifiModuleIp);
+                    socketData = new Socket(inetAddress2, 52849);
+                    //DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                    BufferedReader in = new BufferedReader(new InputStreamReader(socketData.getInputStream()));
+                    System.out.println("ReaderTest");
+                    //System.out.println(in.readLine());
+                    data = in.readLine();
+                    System.out.println("ReadTest");
+                    System.out.println(data);
 
-                //dataOutputStream.write(TestInt);
-                socketData.close();
-                return null;
-            } catch (UnknownHostException e) {
-                data = "none";
-                e.printStackTrace();
-                System.out.println("UnknownHostException Telem");
-            } catch (IOException e) {
-                data = "none";
-                e.printStackTrace();
-                System.out.println("IOException Telem");
+                    //dataOutputStream.write(TestInt);
+                    socketData.close();
+                    System.out.println("socketData closed");
+
+                }catch (UnknownHostException e) {
+                    data = "none";
+                    e.printStackTrace();
+                    System.out.println("UnknownHostException Telem");
+                }catch (IOException e) {
+                    data = "none";
+                    e.printStackTrace();
+                    System.out.println("IOException Telem");
+                }
+
             }
-
-            return null;
         }
     }
 
