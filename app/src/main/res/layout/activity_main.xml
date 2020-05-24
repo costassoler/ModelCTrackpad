@@ -110,6 +110,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/vertmotor" />
 
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:text="CHANNEL 1"
+        android:textColor="@android:color/white"
+        android:textSize="7sp"
+        app:layout_constraintBottom_toTopOf="@+id/Channel1"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <ImageView
         android:id="@+id/LeftPropIcon"
         android:layout_width="60dp"
