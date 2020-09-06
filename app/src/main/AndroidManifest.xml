@@ -11,6 +11,7 @@
 
     <application
         android:allowBackup="true"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/logoredo"
         android:label="Blue Dot"
         android:roundIcon="@mipmap/ic_launcher_round"
